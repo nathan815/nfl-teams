@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "nfl", "runtimeExecutable": "netlify", "runtimeArgs": ["dev", "--port", "8891", "--no-open"], "port": 8891 }
+  ]
+}

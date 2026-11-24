@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gridiron · NFL Fan Hub</title>
+  <meta name="description" content="Schedules, results and standings for every NFL team.">
+  <meta name="theme-color" content="#05080c">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='32' rx='28' ry='17' transform='rotate(-35 32 32)' fill='%238a5a2b'/%3E%3Cpath d='M22 42 42 22M27 31l4 4M31 27l4 4M35 23l4 4' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/" id="brand">
+        <img id="brandLogo" src="" alt="" width="40" height="40" hidden>
+        <span id="brandText">GRID<b>IRON</b></span>
+      </a>
+      <nav id="teamNav" hidden>
+        <a href="#season">Season</a>
+        <a href="#standings">Standings</a>
+        <a href="#schedule">Schedule</a>
+        <a href="/" class="all-teams">All teams</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Home: all 32 teams -->
+  <main class="wrap" id="homeView" hidden>
+    <section class="home-hero">
+      <p class="eyebrow">Unofficial NFL fan hub</p>
+      <h1 class="home-title">Pick your team.</h1>
+      <p class="home-sub">Schedule, results and standings for all 32 teams, live from the field.</p>
+    </section>
+    <div id="league" class="league"></div>
+  </main>
+
+  <!-- Team page -->
+  <main class="wrap" id="teamView" hidden>
+    <section class="hero" id="top">
+      <div class="hero-main">
+        <p class="eyebrow" id="seasonLabel">&nbsp;</p>
+        <h1 class="record" id="record" aria-busy="true"><span class="sk sk-record"></span><span class="sr-only">Loading record…</span></h1>
+        <p class="standing" id="standingSummary"><span class="sk sk-line"></span></p>
+        <div class="chips" id="chips"><span class="sk sk-chip" style="width:110px"></span><span class="sk sk-chip" style="width:104px"></span><span class="sk sk-chip" style="width:92px"></span><span class="sk sk-chip" style="width:124px"></span><span class="sk sk-chip" style="width:96px"></span><span class="sk sk-chip" style="width:96px"></span></div>
+      </div>
+      <aside class="next" id="nextGame" aria-live="polite">
+        <div class="sk next-skel"></div>
+      </aside>
+    </section>
+
+    <section id="season" class="panel">
+      <div class="panel-head">
+        <h2>The Season</h2>
+        <div class="legend">
+          <span><i class="dot win"></i>Win</span>
+          <span><i class="dot loss"></i>Loss</span>
+          <span><i class="dot upcoming"></i>Upcoming</span>
+        </div>
+      </div>
+      <div class="journey" id="journey">
+        <div class="journey-track" id="journeyTrack"></div>
+      </div>
+      <div class="season-stats" id="seasonStats"></div>
+    </section>
+
+    <section id="standings" class="panel">
+      <div class="panel-head">
+        <h2>Standings</h2>
+        <div class="seg" role="tablist" id="standTabs">
+          <button role="tab" aria-selected="true" data-t="division" id="tabDivision">Division</button>
+          <button role="tab" aria-selected="false" data-t="conference" id="tabConference">Conference</button>
+          <button role="tab" aria-selected="false" data-t="league">NFL</button>
+        </div>
+      </div>
+      <div class="table-wrap" id="standingsTable"></div>
+      <p class="note" id="standNote"></p>
+    </section>
+
+    <section id="schedule" class="panel">
+      <div class="panel-head">
+        <h2>Schedule</h2>
+        <div class="seg" role="tablist" id="schedFilter">
+          <button role="tab" aria-selected="true" data-f="all">All</button>
+          <button role="tab" aria-selected="false" data-f="home">Home</button>
+          <button role="tab" aria-selected="false" data-f="away">Away</button>
+          <button role="tab" aria-selected="false" data-f="div">Division</button>
+        </div>
+      </div>
+      <div class="games" id="games"></div>
+    </section>
+  </main>
+
+  <main class="wrap" id="notFound" hidden>
+    <section class="home-hero">
+      <h1 class="home-title">No team here.</h1>
+      <p class="home-sub"><a href="/">See all 32 teams →</a></p>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <div class="foot-meta">
+      <p class="views" id="views" aria-label="Page views">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 5C6.5 5 2.7 9.2 1.5 12c1.2 2.8 5 7 10.5 7s9.3-4.2 10.5-7C21.3 9.2 17.5 5 12 5zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>
+        <span><b id="vToday" class="sk sk-num"></b> today</span><span><b id="vWeek" class="sk sk-num"></b> this week</span><span><b id="vTotal" class="sk sk-num"></b> total</span>
+      </p>
+      <p class="credit">Created by <a href="https://nathancj.com">Nathan Johnson</a></p>
+      <p>Unofficial fan site, not affiliated with the NFL or any team. Data from ESPN<span id="updated"></span></p>
+    </div>
+    <p class="grit" id="grit">GAME ON</p>
+  </footer>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
