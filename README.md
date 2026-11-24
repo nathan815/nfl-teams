@@ -13,4 +13,10 @@ npm install
 netlify dev            # local dev on :8891
 ```
 
-Not deployed yet. Plan: Netlify project `nathancj-nfl` connected to this repo, Cloudflare CNAME `nfl` → `nathancj-nfl.netlify.app` (DNS only), then redirect lions.nathancj.com → nfl.nathancj.com/lions. Live game-day features come after that.
+Hosted on Netlify (project `nathancj-nfl`, https://nathancj-nfl.netlify.app), custom domain nfl.nathancj.com via a Cloudflare CNAME `nfl` → `nathancj-nfl.netlify.app` (DNS only). Deploys are currently CLI uploads; always deploy with the project ID so it can't land on another linked project:
+
+```bash
+netlify deploy --prod --site c5c136e4-1e5b-4840-9b9f-514500684225
+```
+
+Next: connect the Netlify project to this repo for git deploys, Cloudflare Web Analytics, redirect lions.nathancj.com → nfl.nathancj.com/lions, then live game-day features.
