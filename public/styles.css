@@ -302,8 +302,12 @@ a.tm { text-decoration: none; }
 a.tm:hover .full, a.tm:hover .ab { color: var(--blue-hi); }
 a.side { text-decoration: none; color: inherit; }
 a.side:hover .nm { color: var(--blue-hi); }
-.topbar nav a.all-teams { color: var(--blue-hi); }
-@media (max-width: 520px) { .topbar nav a.all-teams { display: none; } }
+.topbar nav a.all-teams { color: var(--blue-hi); display: inline-flex; align-items: center; gap: 6px; }
+/* On phones the link collapses to just the grid icon, in a tappable pill. */
+@media (max-width: 520px) {
+  .topbar nav a.all-teams { padding: 7px 9px; margin-left: 2px; border: 1px solid rgba(var(--hi-rgb), 0.35); border-radius: 9px; }
+  .topbar nav a.all-teams span { display: none; }
+}
 
 .home-hero { padding: 56px 0 28px; }
 .home-title {
@@ -354,3 +358,4 @@ a.side:hover .nm { color: var(--blue-hi); }
 .div:nth-child(4) .team-card { animation-delay: .09s; }
 @keyframes card-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .settled .team-card { animation: none; }
+@media (max-width: 360px) { .topbar nav a { padding: 8px 4px; letter-spacing: 0.03em; } .topbar nav a.all-teams { padding: 6px 7px; } }
