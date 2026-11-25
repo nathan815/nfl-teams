@@ -336,3 +336,21 @@ a.side:hover .nm { color: var(--blue-hi); }
 .tc-rec { font-family: var(--display); font-size: 17px; color: rgb(var(--h)); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tc-seed { font-style: normal; font-size: 11px; margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(var(--h), 0.15); vertical-align: 2px; }
 .sk-card { grid-template-columns: 44px 1fr; border-color: var(--line); background: var(--card); }
+
+/* ---------- loading polish ---------- */
+/* One sweep across the whole viewport so every placeholder shimmers in unison. */
+.sk {
+  background: linear-gradient(100deg, rgba(255,255,255,0.035) 35%, rgba(var(--hi-rgb), 0.14) 50%, rgba(255,255,255,0.035) 65%);
+  background-size: 200vw 100vh; background-attachment: fixed;
+  animation: sk-sweep 1.6s linear infinite;
+}
+@keyframes sk-sweep { from { background-position: 100vw 0; } to { background-position: -100vw 0; } }
+.sk-rec { width: 34px; height: 14px; border-radius: 6px; vertical-align: -1px; }
+.tc-rec.in { animation: rec-in .35s ease-out both; }
+@keyframes rec-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.team-card { animation: card-in .4s ease-out both; }
+.div:nth-child(2) .team-card { animation-delay: .03s; }
+.div:nth-child(3) .team-card { animation-delay: .06s; }
+.div:nth-child(4) .team-card { animation-delay: .09s; }
+@keyframes card-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.settled .team-card { animation: none; }

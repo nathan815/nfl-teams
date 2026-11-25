@@ -1,3 +1,4 @@
+import { LEAGUE } from "./league.js";
 const TZ = "America/New_York";
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -110,35 +111,73 @@ async function trackViews(page) {
 }
 
 /* ====================== home page ====================== */
+const recordHtml = (t) => `${esc(t.record ?? "")}${t.seed && t.seed <= 7 ? `<i class="tc-seed">#${t.seed}</i>` : ""}`;
+
 async function renderHome() {
   $("homeView").hidden = false;
   const league = $("league");
-  league.innerHTML = ["AFC", "NFC"].map((c) => `<section class="conf"><h2>${c}</h2><div class="divs">${Array.from({ length: 4 }, () => `<div class="div"><span class="sk sk-text" style="width:90px;height:14px"></span>${Array.from({ length: 4 }, () => `<div class="team-card sk-card"><span class="sk" style="width:44px;height:44px;border-radius:50%"></span><span class="sk sk-text" style="width:60%;height:14px"></span></div>`).join("")}</div>`).join("")}</div></section>`).join("");
+  // Teams, colors and divisions are static, so the full grid renders immediately;
+  // only the records wait for the network.
+  league.innerHTML = ["AFC", "NFC"].map((conf) => `
+    <section class="conf">
+      <h2>${conf}</h2>
+      <div class="divs">${LEAGUE.filter((d) => d.conf === conf).map((d) => `
+        <div class="div" data-div="${esc(d.name)}">
+          <h3>${esc(d.name.replace(`${conf} `, ""))}</h3>
+          ${d.teams.map((t) => {
+            const p = teamPalette(t.color, t.alt, t.abbr);
+            return `
+            <a class="team-card" data-abbr="${esc(t.abbr)}" href="/${esc(t.slug)}" style="--c:${p.base.join(",")};--h:${p.hi.join(",")}">
+              <img src="${esc(t.logo)}" alt="" width="44" height="44">
+              <span class="tc-name"><small>${esc(t.location)}</small>${esc(t.nickname)}</span>
+              <span class="tc-rec"><span class="sk sk-rec"></span></span>
+            </a>`;
+          }).join("")}
+        </div>`).join("")}
+      </div>
+    </section>`).join("");
+
   try {
     const res = await fetch("/api/teams");
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    league.innerHTML = data.conferences.map((c) => `
-      <section class="conf">
-        <h2>${esc(c.conf)}</h2>
-        <div class="divs">${c.divisions.map((d) => `
-          <div class="div">
-            <h3>${esc(d.name.replace(`${c.conf} `, ""))}</h3>
-            ${d.teams.map((t) => {
-              const p = teamPalette(t.color, t.alt, t.abbr);
-              return `
-              <a class="team-card" href="/${esc(t.slug)}" style="--c:${p.base.join(",")};--h:${p.hi.join(",")}">
-                <img src="${esc(t.logo)}" alt="" width="44" height="44" loading="lazy">
-                <span class="tc-name"><small>${esc(t.location)}</small>${esc(t.nickname)}</span>
-                <span class="tc-rec">${esc(t.record ?? "")}${t.seed && t.seed <= 7 ? `<i class="tc-seed">#${t.seed}</i>` : ""}</span>
-              </a>`;
-            }).join("")}
-          </div>`).join("")}
-        </div>
-      </section>`).join("");
+    league.classList.add("settled"); // entrance animation done; don't replay it on moves
+    for (const c of data.conferences) {
+      for (const d of c.divisions) {
+        const box = league.querySelector(`[data-div="${CSS.escape(d.name)}"]`);
+        for (const t of d.teams) {
+          const rec = league.querySelector(`[data-abbr="${CSS.escape(t.abbr)}"] .tc-rec`);
+          if (!rec) continue;
+          rec.innerHTML = recordHtml(t);
+          rec.classList.add("in");
+        }
+        // Follow the live standings order within each division, moving cards only if it changed.
+        if (!box) continue;
+        const current = [...box.querySelectorAll(".team-card")].map((el) => el.dataset.abbr).join();
+        if (current !== d.teams.map((t) => t.abbr).join()) {
+          for (const t of d.teams) {
+            const card = box.querySelector(`[data-abbr="${CSS.escape(t.abbr)}"]`);
+            if (card) box.appendChild(card);
+          }
+        }
+      }
+    }
   } catch (err) {
-    league.innerHTML = `<div class="error">Couldn't load teams (${esc(err.message)}).</div>`;
+    console.warn("records unavailable", err);
+    for (const el of league.querySelectorAll(".tc-rec")) el.textContent = "";
   }
+}
+
+/** Brand the page for a team: from the static list before data arrives, then from the API. */
+function brandTeam(t) {
+  applyTheme(t);
+  document.title = `${t.name} · NFL Fan Hub`;
+  $("brandLogo").src = t.logo;
+  $("brandLogo").hidden = false;
+  $("brandText").innerHTML = `${esc(t.nickname.toUpperCase())}<b> HUB</b>`;
+  $("grit").textContent = `GO ${t.nickname.toUpperCase()}`;
+  if (t.division) $("tabDivision").textContent = t.division;
+  if (t.conf) $("tabConference").textContent = t.conf;
 }
 
 /* ====================== team page ====================== */
@@ -392,14 +431,7 @@ async function loadTeam() {
     if (!themed) {
       themed = true;
       if (data.team.slug !== slug) history.replaceState(null, "", `/${data.team.slug}${location.hash}`);
-      applyTheme(data.team);
-      document.title = `${data.team.name} · NFL Fan Hub`;
-      $("brandLogo").src = data.team.logo;
-      $("brandLogo").hidden = false;
-      $("brandText").innerHTML = `${esc(data.team.nickname.toUpperCase())}<b> HUB</b>`;
-      $("tabDivision").textContent = data.team.division;
-      $("tabConference").textContent = data.team.conf;
-      $("grit").textContent = `GO ${data.team.nickname.toUpperCase()}`;
+      brandTeam(data.team);
       trackViews(data.team.slug);
     }
     $("record").removeAttribute("aria-busy");
@@ -434,6 +466,10 @@ if (!slug) {
   $("teamNav").hidden = false;
   wireSeg("schedFilter", "f", (f) => { schedFilter = f; renderSchedule(); });
   wireSeg("standTabs", "t", (t) => { standTab = t; renderStandings(); });
+  // Theme the skeleton in the team's colors right away when we know the team.
+  const known = LEAGUE.flatMap((d) => d.teams.map((t) => ({ ...t, conf: d.conf, division: d.name })))
+    .find((t) => t.slug === slug || t.abbr.toLowerCase() === slug);
+  if (known) brandTeam(known);
   renderSkeletons();
   loadTeam();
 }
