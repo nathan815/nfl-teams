@@ -318,7 +318,7 @@ a.side:hover .nm { color: var(--blue-hi); }
 .home-sub { margin: 0; color: var(--silver); font-size: 16px; }
 .home-sub a { color: var(--blue-hi); }
 .league { display: grid; gap: 28px; padding-bottom: 12px; }
-@media (min-width: 1000px) { .league { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1240px) { .league { grid-template-columns: 1fr 1fr; } }
 .conf h2 { margin: 0 0 12px; font-family: var(--display); font-weight: 600; letter-spacing: 0.08em; font-size: 30px; }
 .conf h2::before { content: ""; display: inline-block; width: 6px; height: 0.8em; background: var(--blue); margin-right: 12px; border-radius: 2px; }
 .divs { display: grid; gap: 14px; grid-template-columns: 1fr; }
@@ -359,3 +359,12 @@ a.side:hover .nm { color: var(--blue-hi); }
 @keyframes card-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .settled .team-card { animation: none; }
 @media (max-width: 360px) { .topbar nav a { padding: 8px 4px; letter-spacing: 0.03em; } .topbar nav a.all-teams { padding: 6px 7px; } }
+
+.random-btn {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 20px; padding: 12px 20px; border-radius: 12px;
+  background: var(--blue); color: var(--on-accent); text-decoration: none;
+  font-family: var(--display); font-size: 17px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  box-shadow: 0 10px 28px -10px var(--blue-glow); transition: transform .15s, filter .15s;
+}
+.random-btn:hover { transform: translateY(-2px); filter: brightness(1.12); }
+.random-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
