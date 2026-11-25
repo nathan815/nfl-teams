@@ -460,12 +460,6 @@ function showNotFound() {
 /* ====================== boot ====================== */
 if (!slug) {
   renderHome();
-  // Choose at click time so every press (including after Back) is a fresh pick.
-  const pickRandom = () => {
-    const teams = LEAGUE.flatMap((d) => d.teams);
-    $("randomTeam").href = `/${teams[Math.floor(Math.random() * teams.length)].slug}`;
-  };
-  for (const ev of ["click", "auxclick"]) $("randomTeam").addEventListener(ev, pickRandom);
   trackViews("home");
 } else {
   $("teamView").hidden = false;

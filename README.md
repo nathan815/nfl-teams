@@ -6,6 +6,7 @@ Unofficial fan site for every NFL team: schedule, results and standings at `nfl.
 - `netlify/functions/_shared/espn.mts` – ESPN public API layer (teams, division/conference standings, per-team schedule)
 - `netlify/functions/team.mts` – `/api/team/:team`, CDN-cached ~60s per team
 - `netlify/functions/teams.mts` – `/api/teams`, all 32 teams by division with records, cached ~5 min
+- `netlify/functions/random.mts` – `/random`, redirects to a random team
 - `netlify/functions/views.mts` – `/api/views?page=<home|slug>`, per-page view counter (today / week / total) in Netlify Blobs
 
 ```bash
